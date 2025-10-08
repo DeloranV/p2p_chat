@@ -7,11 +7,9 @@
 
 #include <string>
 
-namespace utilities {
-  enum Mode {
-    SERVER,
-    CLIENT,
-  };
+namespace util {
+  enum Mode { SERVER, CLIENT, EXIT };
+  enum ClientChoice { TARGET_IP, HOST_LIST };
 
   // TODO PROTOBUF SERIALIZATION
   static std::string deserialize_message(std::string& payload) {

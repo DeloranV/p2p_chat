@@ -9,18 +9,8 @@
 
 int main(int argc, char* argv[]) {
   boost::asio::io_context io_context;
-  if (argc == 1) {
-    CLI_application app(io_context, utilities::Mode::SERVER);
-    app.run_server();
-  }
-  else if (argc == 2) {
-    CLI_application app(io_context, utilities::Mode::CLIENT);
-    std::string target_ip = argv[1];
-    app.run_client(target_ip);
-  }
-  else {
-    std::cout << "Usage: \n Server: chat_app \n Client: chat_app <target_ip> \n";
-  }
+  CLI_application app (io_context);
+  app.run();
 
   return 0;
 }

@@ -5,20 +5,27 @@
 #ifndef CHAT_APP_CLIENT_H
 #define CHAT_APP_CLIENT_H
 #include <boost/asio.hpp>
+#include <boost/asio/ssl.hpp>
 #include "../core/session.h"
 
 using boost::asio::ip::tcp;
+namespace ssl = boost::asio::ssl;
+typedef ssl::stream<tcp::socket> ssl_socket;
 
 namespace networking {
-  class p2p_client {
+  class Client {
   public:
-    explicit p2p_client(boost::asio::io_context& io_context);
+    explicit Client(boost::asio::io_context& io_context);
     std::shared_ptr<session::chat_session> create_session(std::string& target_ip);
 
   private:
+    // TODO LEGITIMATE CERTIFICATE VERIFICATION
+    // bool verify_certificate(bool preverified, ssl::verify_context& ctx);
+
     boost::asio::io_context& io_context_;
+    ssl::context ctx_;
     tcp::resolver resolver_;
-    tcp::socket socket_;
+    ssl_socket socket_;
   };
 }
 

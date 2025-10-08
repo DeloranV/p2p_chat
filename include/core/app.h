@@ -13,15 +13,16 @@
 
 class CLI_application {
 public:
-  CLI_application(boost::asio::io_context& io_context, utilities::Mode programMode);
-  void run_client(std::string target_ip);
-  void run_server();
+  CLI_application(boost::asio::io_context& io_context);
+  void run();
+  void start_client(std::string target_ip);
+  void start_server();
 
 private:
   boost::asio::io_context& io_context_;
   std::shared_ptr<CLI::CLI_Manager> cli_manager_;
-  std::shared_ptr<networking::p2p_server> server_;
-  std::shared_ptr<networking::p2p_client> client_;
+  std::shared_ptr<networking::Server> server_;
+  std::shared_ptr<networking::Client> client_;
   std::shared_ptr<session::chat_session> session_;
 };
 
