@@ -22,9 +22,14 @@ namespace util {
     return deserialized;
   }
 
-  static std::string serialize_message(const std::string& remote_ip, const std::string& msg_contents) {
+  static std::string serialize_message(const std::string& local_ip, const std::string& msg_contents) {
     return boost::posix_time::to_simple_string(boost::posix_time::second_clock::local_time().time_of_day()) +
-      "|" + msg_contents + "|" + remote_ip;
+      "|" + msg_contents + "|" + local_ip;
+  }
+
+  static std::string sent_message(const std::string& local_ip, const std::string& msg_contents) {
+    return boost::posix_time::to_simple_string(boost::posix_time::second_clock::local_time().time_of_day()) +
+      " " + local_ip + "(you): " + msg_contents;
   }
 
 }

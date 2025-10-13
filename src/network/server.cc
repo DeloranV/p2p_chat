@@ -2,15 +2,15 @@
 // Created by rolandpwrrt on 7.10.2025.
 //
 #include "network/server.h"
-
+#include "core/session_adapter.h"
 #include <cli/cli_management.h>
 
 namespace networking {
-  Server::Server(boost::asio::io_context& io_context)
+  Server::Server(boost::asio::io_context& io_context, std::string& port)
       : io_context_(io_context),
         ctx(ssl::context::sslv23),
         socket_(io_context),
-        acceptor_(tcp::acceptor(io_context, tcp::endpoint(tcp::v4(), std::stoi(CLI::obtain_port()))))
+        acceptor_(tcp::acceptor(io_context, tcp::endpoint(tcp::v4(), std::stoi(port))))
   {
     ctx.set_options(
       ssl::context::default_workarounds
@@ -27,12 +27,11 @@ namespace networking {
       acceptor_.close();
     }
 
-    std::shared_ptr<session::chat_session> Server::create_session() {
-      CLI::server_listen();
+    std::shared_ptr<session::chat_session> Server::await_connection(SessionAdapter& adapter) {
       acceptor_.accept(socket_);
       ssl_socket s_socket (std::move(socket_), ctx);
       s_socket.handshake(ssl::stream_base::server);
       // std::move SINCE WE NEED TO TRANSFER OWNERSHIP OF THE SOCKET TO THE SESSION OBJECT
-      return std::make_shared<session::chat_session>(io_context_, std::move(s_socket));
+      return std::make_shared<session::chat_session>(io_context_, std::move(s_socket), adapter);
     }
   };

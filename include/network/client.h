@@ -7,6 +7,7 @@
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
 #include "../core/session.h"
+#include "core/session_adapter.h"
 
 using boost::asio::ip::tcp;
 namespace ssl = boost::asio::ssl;
@@ -16,7 +17,8 @@ namespace networking {
   class Client {
   public:
     explicit Client(boost::asio::io_context& io_context);
-    std::shared_ptr<session::chat_session> create_session(std::string& target_ip);
+    std::shared_ptr<session::chat_session> create_session(
+      std::string& target_ip, std::string& target_port, SessionAdapter& adapter);
 
   private:
     // TODO LEGITIMATE CERTIFICATE VERIFICATION

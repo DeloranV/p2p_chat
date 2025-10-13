@@ -14,8 +14,11 @@
 namespace session {
     // SOCKET TAKEN BY RVALUE SINCE SESSION WILL BE THE OWNER
     // OWNERSHIP OF SOCKET PASSED BY VALUE FOR VERSATILE API - WILL ACCEPT BOTH LVALUE AND RVALUE INSTEAD OF JUST RVAL
-    chat_session::chat_session(boost::asio::io_context &io_context, ssl_socket socket)
-        : socket_(std::move(socket)), io_context_(io_context) {
+    chat_session::chat_session(boost::asio::io_context &io_context, ssl_socket socket, SessionAdapter& adapter)
+        : socket_(std::move(socket)),
+          io_context_(io_context),
+          session_adapter_(adapter)
+    {
         CLI::display_conn_accepted(socket_.lowest_layer().remote_endpoint().address().to_string());
     }
 
@@ -42,16 +45,21 @@ namespace session {
     void chat_session::do_send_msg(std::string msg) {
         boost::system::error_code error;
         std::string payload =
-                util::serialize_message(socket_.lowest_layer().remote_endpoint().address().to_string(), msg);
+                util::serialize_message(socket_.lowest_layer().local_endpoint().address().to_string(), msg);
 
         socket_.write_some(boost::asio::buffer(payload), error);
-        CLI::display_sent_msg(socket_.lowest_layer().local_endpoint().address().to_string(), msg);
     }
 
     void chat_session::listen_msg() {
         socket_.async_read_some(boost::asio::buffer(rx_buf_), boost::bind(&chat_session::display_received,
                                                                           this, boost::asio::placeholders::error,
                                                                           boost::asio::placeholders::bytes_transferred));
+    }
+
+    void chat_session::display_sent(std::string msg) {
+        std::string payload =
+                util::sent_message(socket_.lowest_layer().local_endpoint().address().to_string(), msg);
+        emit session_adapter_.message_received(QString(payload.c_str()));
     }
 
     void chat_session::display_received(const boost::system::error_code &error,
@@ -69,7 +77,7 @@ namespace session {
             std::string received_msg = buffer_data.substr(0, bytes_transferred);
             // THEREFORE WE NEED TO READ ONLY AS MUCH AS WE GOT
             std::string deserialized = util::deserialize_message(received_msg);
-            CLI::display_received_msg(deserialized);
+            emit session_adapter_.message_received(QString(deserialized.c_str()));
             listen_msg();
         }
     }

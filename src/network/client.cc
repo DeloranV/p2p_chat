@@ -5,6 +5,7 @@
 #include <boost/asio.hpp>
 #include <iostream>
 #include <cli/cli_management.h>
+#include "core/session_adapter.h"
 
 namespace networking {
   Client::Client(boost::asio::io_context &io_context)
@@ -19,13 +20,14 @@ namespace networking {
     //   std::bind(&p2p_client::verify_certificate, this, std::placeholders::_1, std::placeholders::_2));
   }
 
-  std::shared_ptr<session::chat_session> Client::create_session(std::string &target_ip) {
-    auto endpoints = resolver_.resolve(target_ip, CLI::obtain_port());
+  std::shared_ptr<session::chat_session> Client::create_session(
+    std::string &target_ip, std::string& target_port, SessionAdapter& adapter) {
+    auto endpoints = resolver_.resolve(target_ip, target_port);
     boost::asio::connect(socket_.lowest_layer(), endpoints);
     //socket_.set_verify_callback(ssl::host_name_verification("host.name"));  TODO ?
     socket_.handshake(ssl::stream_base::client);
     // std::move SINCE WE NEED TO TRANSFER OWNERSHIP OF THE SOCKET TO THE SESSION OBJECT
-    return std::make_shared<session::chat_session>(io_context_, std::move(socket_));
+    return std::make_shared<session::chat_session>(io_context_, std::move(socket_), adapter);
   }
 
   // TODO LEGITIMATE CERT VERIFICATION
