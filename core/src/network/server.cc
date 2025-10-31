@@ -14,6 +14,8 @@ namespace networking {
       socket_(io_context),
       acceptor_(tcp::acceptor(io_context, tcp::endpoint(tcp::v4(), 33333))) // TODO MOVE PORT TO GLOBAL CONFIG
   {
+    crypto::create_private_key();
+    configure_tls();
   }
 
   Server::~Server() {
@@ -25,8 +27,8 @@ namespace networking {
       ssl::context::default_workarounds
       | ssl::context::no_sslv2
       | ssl::context::single_dh_use);
-    ctx.use_certificate_chain_file("../../ssl_test_keys_backup/server.crt");
-    ctx.use_private_key_file("../../ssl_test_keys_backup/server.key", ssl::context::pem);
+    ctx.use_certificate_chain_file("cert.pem");
+    ctx.use_private_key_file("key.pem", ssl::context::pem);
   }
 
   void Server::handle_accept(const boost::system::error_code &error, std::function<void(ssl_socket)> callback) {
