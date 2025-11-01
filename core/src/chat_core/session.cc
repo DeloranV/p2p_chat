@@ -9,6 +9,7 @@
 #include <array>
 #include <string>
 #include "util/util.h"
+
 namespace session {
     // SOCKET TAKEN BY RVALUE SINCE SESSION WILL BE THE OWNER
     // OWNERSHIP OF SOCKET PASSED BY VALUE FOR VERSATILE API - WILL ACCEPT BOTH LVALUE AND RVALUE INSTEAD OF JUST RVAL
@@ -70,7 +71,8 @@ namespace session {
             // ...OVERWRITING THE PREVIOUS CHARACTERS - IF CURRENT MESSAGE IS SHORTER THAN PREVIOUS THEN THERE WILL BE ...
             // ...A PART OF THE OLDER MESSAGE STILL IN THE BUFFER
             std::string serialized = buffer_data.substr(0, bytes_transferred);
-            last_received_msg = util::deserialize_message(serialized);
+            auto deserialized = util::deserialize_message(serialized);
+            last_received_msg = util::msg_as_string(deserialized);
             handler(last_received_msg);
             //display_received();
         }

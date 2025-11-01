@@ -1,7 +1,21 @@
 #include "crypto/cert_gen.h"
+#include <fstream>
+
 
 namespace crypto {
+  inline bool keys_exist() {
+    std::ifstream key("key.pem");
+    std::ifstream crt("cert.pem");
+    bool exist = key.good() && crt.good();
+
+    key.close();
+    crt.close();
+    return exist;
+  }
+
   void create_private_key() {
+    if (keys_exist()) return;
+
     EVP_PKEY* pkey;
     pkey = EVP_PKEY_new();
 

@@ -26,7 +26,7 @@ namespace networking {
     // unknown CA ALERT AND TERMINATES THE SESSION
     socket_.set_verify_callback([](bool preverified, verify_context& ctx) {
       std::cout << "verifying" << std::endl;
-      return false;
+      return true;
     });
   }
 

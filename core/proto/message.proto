@@ -1,0 +1,9 @@
+edition = "2023";
+
+package messages;
+
+message ChatMessage {
+  string timestamp = 1;
+  string sender_ip = 2;
+  string msg_contents = 3;
+}

@@ -30,6 +30,7 @@ protected:
 };
 
 TEST_F(ServerClientIntegration, ConnectionHandshake) {
+  // std future here
   std::string local_ip = "localhost";
   bool client_connect_success = false;
   auto client_socket = client_.try_connect(local_ip);
