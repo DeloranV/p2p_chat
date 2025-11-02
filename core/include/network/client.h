@@ -15,7 +15,7 @@ namespace networking {
   class Client {
   public:
     explicit Client(boost::asio::io_context& io_context);
-    [[nodiscard]] ssl_socket&& try_connect(std::string& target_ip);
+    [[nodiscard]] ssl_socket try_connect(std::string& target_ip);
 
   private:
     // TODO LEGITIMATE CERTIFICATE VERIFICATION
@@ -24,7 +24,6 @@ namespace networking {
     boost::asio::io_context& io_context_;
     ssl::context ctx_;
     tcp::resolver resolver_;
-    ssl_socket socket_;
   };
 }
 

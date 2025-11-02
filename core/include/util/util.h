@@ -7,12 +7,27 @@
 
 #include <string>
 #include <boost/date_time.hpp>
+#include <boost/asio/ssl.hpp>
 #include "message.pb.h"
 
 namespace util {
   enum Mode { SERVER, CLIENT, EXIT };
   enum ClientChoice { TARGET_IP, HOST_LIST };
-  enum ListeningMode {PASSIVE, ACTIVE};
+  enum ListeningMode { PASSIVE, ACTIVE };
+
+  enum class ChatError {
+    OK,
+    REMOTE_HOST_DISCONNECT,
+    UNKNOWN_ERROR
+  };
+
+  static ChatError translate_error(const boost::system::error_code& ec) {
+    namespace ssl = boost::asio::ssl;
+
+    if (!ec) return ChatError::OK;
+    if (ec == ssl::error::stream_truncated) return ChatError::REMOTE_HOST_DISCONNECT;
+    return ChatError::UNKNOWN_ERROR;
+  }
 
   // TODO PROTOBUF SERIALIZATION
   static messages::ChatMessage deserialize_message(std::string& payload) {

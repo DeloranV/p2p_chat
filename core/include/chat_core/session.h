@@ -8,6 +8,7 @@
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
 #include "util/message.pb.h"
+#include "util/util.h"
 
 using boost::asio::ip::tcp;
 namespace ssl = boost::asio::ssl;
@@ -21,22 +22,25 @@ namespace session {
     // NEED TO DELETE COPY CONSTRUCTOR AND MAKE A MOVE CONSTRUCTOR, OTHERWISE WE WOULD NOT BE ABLE TO PUSH BACK INTO
     // THE session_manager VECTOR OF SESSIONS
     chat_session(chat_session&) = delete;
+
     chat_session(chat_session&&) noexcept;
 
     void end_session();
     void send_msg(std::string msg);
     void do_send_msg(std::string msg);
-    void listen_msg(std::function<void(std::string)> handler);
+    void listen_msg(std::function<void(std::string, util::ChatError, messages::ChatMessage)> handler);
     void display_sent(std::string msg);
     std::string get_local_address();
     std::string get_remote_address();
 
   private:
     void display_received();
-    void save_received(const boost::system::error_code& error, std::size_t bytes_transferred, std::function<void(std::string)> handler);
+    void save_received(const boost::system::error_code& error, std::size_t bytes_transferred,
+      std::function<void(std::string, util::ChatError, messages::ChatMessage)> handler);
 
     std::array<char, 128> rx_buf_;
     ssl_socket socket_;
+    std::string remote_endpoint_address_;
     std::string last_received_msg;
     boost::asio::io_context& io_context_;
   };

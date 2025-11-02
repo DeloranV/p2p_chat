@@ -6,21 +6,16 @@ GuiManager::GuiManager()
     : chat_window_(std::make_unique<ChatWindow>()),
         main_menu_(std::make_unique<MainMenu>()),
         unavailable_(std::make_unique<Unavailable>()),
-        add_host_(std::make_unique<AddHost>())
+        add_host_(std::make_unique<AddHost>()),
+        disconnect_(std::make_unique<Disconnect>())
 {
     connect(main_menu_->get_add_host_button(), &QPushButton::clicked, this, &GuiManager::open_add_host);
     connect(add_host_->get_cancel_button(), &QPushButton::clicked, this, &GuiManager::go_back);
     connect(add_host_->get_add_button(), &QPushButton::clicked, this, &GuiManager::new_host_added);
     connect(main_menu_->get_connect_button(), &QPushButton::clicked, this, &GuiManager::chat_window_opened_wrapper);
     connect(unavailable_->get_OK_button(), &QPushButton::clicked, this, &GuiManager::go_back);
-    // connect(main_menu_->get_client_button(), &QPushButton::clicked, this, &GuiManager::open_ip_port_prompt);
-    // connect(main_menu_->get_server_button(), &QPushButton::clicked, this, &GuiManager::open_port_prompt);
-    // connect(port_prompt_->get_OK_button(), &QPushButton::clicked, this, &GuiManager::open_server_listen_connection);
-    // connect(port_prompt_->get_OK_button(), &QPushButton::clicked, this, &GuiManager::server_port_given);
-    // connect(direct_connection_->get_OK_button(), &QPushButton::clicked, this, &GuiManager::client_ip_port_given);
+    connect(disconnect_->get_OK_button(), &QPushButton::clicked, this, &GuiManager::go_back_to_menu);
     connect(chat_window_->get_SEND_button(), &QPushButton::clicked, this, &GuiManager::emit_sent_msg);
-    // connect(program_mode_->program_mode.pushButton, &QPushButton::clicked, this, &GuiManager::open_prompt);
-    // connect(program_mode_->program_mode.pushButton, &QPushButton::clicked, this, &GuiManager::open_prompt);
 }
 
 void GuiManager::chat_window_opened_wrapper() {
@@ -52,6 +47,14 @@ void GuiManager::go_back() {
     }
 }
 
+void GuiManager::go_back_to_menu() {
+    if (!nav_stack_.empty()) {
+        nav_stack_.top()->hide();
+        while (nav_stack_.top()->view_name != "main_menu") nav_stack_.pop();
+        nav_stack_.top()->show();
+    }
+}
+
 void GuiManager::emit_sent_msg() {
     auto msg = chat_window_->get_message();
     emit message_sent(msg);
@@ -77,4 +80,6 @@ void GuiManager::open_add_host() {
     go_into(add_host_.get());
 }
 
-
+void GuiManager::open_host_disconnected() {
+    go_into(disconnect_.get());
+}

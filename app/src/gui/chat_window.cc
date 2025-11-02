@@ -1,6 +1,8 @@
 #include "gui/chat_window.hpp"
 
-ChatWindow::ChatWindow() {
+ChatWindow::ChatWindow()
+    : AbstractView("chat_window")
+{
     chat_window.setupUi(this);
 }
 

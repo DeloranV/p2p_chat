@@ -30,12 +30,15 @@ add_executable(chat_exec
         src/gui/main_menu.cc
         include/gui/unavailable.h
         src/gui/unavailable.cc
+        include/gui/disconnect.h
+        src/gui/disconnect.cc
         include/gui/view.h
         # ui
         ui/add_host.ui
         ui/chat_window.ui
         ui/main_menu.ui
         ui/unavailable.ui
+        ui/disconnect.ui
 )
 
 target_include_directories(chat_exec PRIVATE

@@ -15,6 +15,14 @@ void SessionAdapter::register_session(session::chat_session* session) {
   session_ = session;
 }
 
+void SessionAdapter::deregister_session() {
+  session_ = nullptr;
+}
+
+void SessionAdapter::emit_host_disconnect() {
+  emit host_disconnect();
+}
+
 void SessionAdapter::message_sent(QString msg) {
   // session_->display_sent(msg.toStdString());
   auto displayed = util::sent_message(session_->get_local_address(), msg.toStdString());

@@ -1,6 +1,8 @@
 #include "gui/add_host.h"
 
-AddHost::AddHost() {
+AddHost::AddHost()
+  : AbstractView("add_host")
+{
   add_host_widget_.setupUi(this);
 }
 

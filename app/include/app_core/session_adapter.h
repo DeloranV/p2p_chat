@@ -18,6 +18,8 @@ class SessionAdapter : public QObject {
 public:
   SessionAdapter(boost::asio::io_context& io_context);
   void register_session(session::chat_session* session);
+  void deregister_session();
+  void emit_host_disconnect();
 
   boost::asio::io_context& io_context_;
   session::chat_session* session_;
@@ -27,6 +29,7 @@ public slots:
 
 signals:
   void message_received(QString msg);
+  void host_disconnect();
 };
 
 

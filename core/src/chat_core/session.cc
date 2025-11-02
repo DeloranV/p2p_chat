@@ -15,7 +15,8 @@ namespace session {
     // OWNERSHIP OF SOCKET PASSED BY VALUE FOR VERSATILE API - WILL ACCEPT BOTH LVALUE AND RVALUE INSTEAD OF JUST RVAL
     chat_session::chat_session(boost::asio::io_context &io_context, ssl_socket socket)
         : socket_(std::move(socket)),
-          io_context_(io_context)
+          io_context_(io_context),
+          remote_endpoint_address_(socket_.lowest_layer().remote_endpoint().address().to_string())
     {}
 
     chat_session::~chat_session() {
@@ -25,7 +26,8 @@ namespace session {
 
     chat_session::chat_session(chat_session&& session) noexcept
         : socket_(std::move(session.socket_)),
-          io_context_(io_context_)
+          io_context_(io_context_),
+          remote_endpoint_address_(std::move(session.remote_endpoint_address_))
     {}
 
     std::string chat_session::get_local_address() {
@@ -33,7 +35,7 @@ namespace session {
     }
 
     std::string chat_session::get_remote_address() {
-        return socket_.lowest_layer().remote_endpoint().address().to_string();
+        return remote_endpoint_address_;
     }
 
     // CALLBACK FOR CLI_MANAGER - CONSOLE THREAD FROM CLI_manager::await_input CANNOT DIRECTLY CALL socket_.write_some()
@@ -45,7 +47,7 @@ namespace session {
     void chat_session::do_send_msg(std::string msg) {
         boost::system::error_code error;
         std::string payload =
-                util::serialize_message(socket_.lowest_layer().local_endpoint().address().to_string(), msg);
+                util::serialize_message(remote_endpoint_address_, msg);
 
         socket_.write_some(boost::asio::buffer(payload), error);
     }
@@ -57,25 +59,29 @@ namespace session {
     //     emit session_adapter_.message_received(QString(payload.c_str()));
     // }
 
-    void chat_session::listen_msg(std::function<void(std::string)> handler) {
+    // TODO TYPE ALIAS FOR THE HANDLER - using message_handler_t
+    void chat_session::listen_msg(std::function<void(std::string, util::ChatError, messages::ChatMessage)> handler) {
         socket_.async_read_some(boost::asio::buffer(rx_buf_), boost::bind(&chat_session::save_received,
                                                                           this, boost::asio::placeholders::error,
                                                                           boost::asio::placeholders::bytes_transferred, handler));
     }
 
     void chat_session::save_received(const boost::system::error_code &error,
-        std::size_t bytes_transferred, std::function<void(std::string)> handler) {
-        if (!error) {
-            std::string buffer_data = rx_buf_.data();
-            // WHEN MESSAGE IS READ FROM A SOCKET IT FILLS THE BUFFER FROM THE BEGINNING UP TO THE LENGTH OF THE MSG ...
-            // ...OVERWRITING THE PREVIOUS CHARACTERS - IF CURRENT MESSAGE IS SHORTER THAN PREVIOUS THEN THERE WILL BE ...
-            // ...A PART OF THE OLDER MESSAGE STILL IN THE BUFFER
-            std::string serialized = buffer_data.substr(0, bytes_transferred);
-            auto deserialized = util::deserialize_message(serialized);
-            last_received_msg = util::msg_as_string(deserialized);
-            handler(last_received_msg);
-            //display_received();
+        std::size_t bytes_transferred, std::function<void(std::string, util::ChatError, messages::ChatMessage)> handler) {
+        auto err_c = util::translate_error(error);
+        if (err_c != util::ChatError::OK) {
+            handler(remote_endpoint_address_, err_c, {});
+            return;
         }
+        std::string buffer_data = rx_buf_.data();
+        // WHEN MESSAGE IS READ FROM A SOCKET IT FILLS THE BUFFER FROM THE BEGINNING UP TO THE LENGTH OF THE MSG ...
+        // ...OVERWRITING THE PREVIOUS CHARACTERS - IF CURRENT MESSAGE IS SHORTER THAN PREVIOUS THEN THERE WILL BE ...
+        // ...A PART OF THE OLDER MESSAGE STILL IN THE BUFFER
+        std::string serialized = buffer_data.substr(0, bytes_transferred);
+        auto deserialized = util::deserialize_message(serialized);
+        //last_received_msg = util::msg_as_string(deserialized);
+        handler(remote_endpoint_address_, err_c, deserialized);
+        //display_received();
         listen_msg(handler);
     }
 

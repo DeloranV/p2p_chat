@@ -17,6 +17,7 @@ ChatController::ChatController(boost::asio::io_context &io_context)
   connect(gui_manager_.get(), &GuiManager::chat_window_opened, this, &ChatController::open_chat);
   connect(gui_manager_.get(), &GuiManager::message_sent, adapter_.get(), &SessionAdapter::message_sent);
   connect(adapter_.get(), &SessionAdapter::message_received, gui_manager_.get(), &GuiManager::display_received_msg);
+  connect(adapter_.get(), &SessionAdapter::host_disconnect, gui_manager_.get(), &GuiManager::open_host_disconnected);
 }
 
 void ChatController::run() {

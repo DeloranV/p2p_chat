@@ -5,6 +5,7 @@ include(GoogleTest)
 add_executable(run_tests
         src/util_test.cc
         src/network_test.cc
+        src/session_test.cc
 )
 
 enable_testing()

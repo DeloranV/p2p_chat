@@ -15,6 +15,7 @@
 #include "add_host.h"
 #include "gui/unavailable.h"
 #include "chat_window.hpp"
+#include "gui/disconnect.h"
 
 class GuiManager : public QObject {
     Q_OBJECT
@@ -22,16 +23,18 @@ public:
     GuiManager();
     std::string get_host_ip() const;
     void go_into(AbstractView* dst);
-    void go_back();
 
 public slots:
     void open_main_menu();
     void open_chat_window();
     void open_unavailable();
+    void open_host_disconnected();
     void open_add_host();
     void emit_sent_msg();
     void display_received_msg(QString msg);
     void new_host_added();
+    void go_back_to_menu();
+    void go_back();
 
     void chat_window_opened_wrapper();
 
@@ -46,10 +49,11 @@ private:
     // we don't want to create copies of abstractviews just for navigation tracking
     // so we pass the pointers to them instead to have them hold copies of pointers to their addresses
     // (as if we passed a reference to them, but we can't since they're dynamically allocated)
-    std::stack<AbstractView*> nav_stack_;
+    std::stack<AbstractView*> nav_stack_;   // TODO CHANE UNIQUEPTR TO THE QT PARENT CHILD OWNERSHIP ?
     std::unique_ptr<ChatWindow> chat_window_;
     std::unique_ptr<MainMenu> main_menu_;
     std::unique_ptr<Unavailable> unavailable_;
+    std::unique_ptr<Disconnect> disconnect_;
     std::unique_ptr<AddHost> add_host_;
 };
 

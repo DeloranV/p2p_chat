@@ -1,6 +1,8 @@
 #include "gui/unavailable.h"
 
-Unavailable::Unavailable() {
+Unavailable::Unavailable()
+  : AbstractView("unavailable")
+{
   unavailable_widget_.setupUi(this);
 }
 

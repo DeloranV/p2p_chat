@@ -1,6 +1,8 @@
 #include "gui/main_menu.h"
 
-MainMenu::MainMenu() {
+MainMenu::MainMenu()
+  : AbstractView("main_menu")
+{
   main_menu_widget_.setupUi(this);
 }
 

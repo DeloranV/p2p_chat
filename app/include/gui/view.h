@@ -11,7 +11,13 @@
 class AbstractView : public QWidget {
   Q_OBJECT
 public:
+  AbstractView(std::string name)
+    : view_name(std::move(name))
+  {}
+
   virtual void somefunc() = 0;
+
+  const std::string view_name;
 };
 
 #endif //CHAT_APP_VIEW_H
