@@ -1,21 +1,23 @@
-//
-// Created by rolandpwrrt on 28.10.2025.
-//
-
 #ifndef CHAT_APP_UNAVAILABLE_H
 #define CHAT_APP_UNAVAILABLE_H
 
-#include "view.h"
 #include "ui/ui_unavailable.h"
+#include "view.h"
+
+namespace chat_exec {
+
+namespace gui {
 
 class Unavailable : public AbstractView {
-public:
+ public:
   Unavailable();
   void somefunc() override;
-  QPushButton* get_OK_button() const;
+  [[nodiscard]] QPushButton* get_OK_button() const;
 
-private:
+ private:
   Ui::unavailable_widget unavailable_widget_;
 };
+}  // namespace gui
+}  // namespace chat_exec
 
-#endif //CHAT_APP_UNAVAILABLE_H
+#endif  // CHAT_APP_UNAVAILABLE_H

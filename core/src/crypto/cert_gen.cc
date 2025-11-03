@@ -1,7 +1,6 @@
 #include "crypto/cert_gen.h"
 #include <fstream>
 
-
 namespace crypto {
   inline bool keys_exist() {
     std::ifstream key("key.pem");

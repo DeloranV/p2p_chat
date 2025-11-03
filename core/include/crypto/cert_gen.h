@@ -1,7 +1,3 @@
-//
-// Created by rolandpwrrt on 31.10.2025.
-//
-
 #ifndef CHAT_APP_CERT_GEN_H
 #define CHAT_APP_CERT_GEN_H
 

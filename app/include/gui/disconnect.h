@@ -1,21 +1,23 @@
-//
-// Created by rolandpwrrt on 28.10.2025.
-//
-
 #ifndef CHAT_APP_DISCONNECT_H
 #define CHAT_APP_DISCONNECT_H
 
-#include "view.h"
 #include "ui/ui_disconnect.h"
+#include "view.h"
+
+namespace chat_exec {
+
+namespace gui {
 
 class Disconnect : public AbstractView {
-public:
+ public:
   Disconnect();
   void somefunc() override;
-  QPushButton* get_OK_button() const;
+  [[nodiscard]] QPushButton* get_OK_button() const;
 
-private:
+ private:
   Ui::disconnect_widget disconnect_widget_;
 };
+}  // namespace gui
+}  // namespace chat_exec
 
-#endif //CHAT_APP_DISCONNECT_H
+#endif  // CHAT_APP_DISCONNECT_H

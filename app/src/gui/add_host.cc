@@ -1,8 +1,10 @@
 #include "gui/add_host.h"
 
-AddHost::AddHost()
-  : AbstractView("add_host")
-{
+namespace chat_exec {
+
+namespace gui {
+
+AddHost::AddHost() : AbstractView("add_host") {
   add_host_widget_.setupUi(this);
 }
 
@@ -10,8 +12,8 @@ QPushButton* AddHost::get_add_button() const {
   return add_host_widget_.pushButton;
 }
 
-QPushButton *AddHost::get_cancel_button() const {
- return add_host_widget_.pushButton_2;
+QPushButton* AddHost::get_cancel_button() const {
+  return add_host_widget_.pushButton_2;
 }
 
 QLineEdit* AddHost::get_ip_line_edit() const {
@@ -30,8 +32,6 @@ std::string AddHost::get_host_name() const {
   return get_host_name_line_edit()->text().toStdString();
 }
 
-
-void AddHost::somefunc() {
-
-}
-
+void AddHost::somefunc() {}
+}  // namespace gui
+}  // namespace chat_exec

@@ -1,69 +1,61 @@
-//
-// Created by rolandpwrrt on 7.10.2025.
-//
-
 #ifndef CHAT_APP_UTIL_H
 #define CHAT_APP_UTIL_H
 
-#include <string>
-#include <boost/date_time.hpp>
 #include <boost/asio/ssl.hpp>
+#include <boost/date_time.hpp>
+#include <string>
+
 #include "message.pb.h"
 
+namespace chat_lib {
+
 namespace util {
-  enum Mode { SERVER, CLIENT, EXIT };
-  enum ClientChoice { TARGET_IP, HOST_LIST };
-  enum ListeningMode { PASSIVE, ACTIVE };
 
-  enum class ChatError {
-    OK,
-    REMOTE_HOST_DISCONNECT,
-    UNKNOWN_ERROR
-  };
+enum Mode { SERVER, CLIENT, EXIT };
+enum ClientChoice { TARGET_IP, HOST_LIST };
+enum ListeningMode { PASSIVE, ACTIVE };
 
-  static ChatError translate_error(const boost::system::error_code& ec) {
-    namespace ssl = boost::asio::ssl;
+enum class ChatError { OK, REMOTE_HOST_DISCONNECT, UNKNOWN_ERROR };
 
-    if (!ec) return ChatError::OK;
-    if (ec == ssl::error::stream_truncated) return ChatError::REMOTE_HOST_DISCONNECT;
-    return ChatError::UNKNOWN_ERROR;
-  }
+static ChatError translate_error(const boost::system::error_code& ec) {
+  namespace ssl = boost::asio::ssl;
 
-  // TODO PROTOBUF SERIALIZATION
-  static messages::ChatMessage deserialize_message(std::string& payload) {
-    messages::ChatMessage deserialized;
-    deserialized.ParseFromString(payload);
-    return deserialized;
-    // auto first_delim = payload.find('|');
-    // auto second_delim = first_delim + payload.substr(first_delim + 1).find('|') + 1;
-    // std::string timestamp = payload.substr(0, first_delim);
-    // std::string content = payload.substr(first_delim + 1, second_delim - first_delim - 1);
-    // std::string ip_address = payload.substr(second_delim + 1);
-    // std::string deserialized = timestamp + " " + ip_address + ": " + content;
-    // return deserialized;
-  }
-
-  static std::string serialize_message(std::string local_ip, std::string& msg_contents) {
-    messages::ChatMessage msg;
-    auto timestamp = boost::posix_time::to_simple_string(
-      boost::posix_time::second_clock::local_time().time_of_day());
-    msg.set_timestamp(timestamp);
-    msg.set_msg_contents(msg_contents);
-    msg.set_sender_ip(local_ip);
-    return msg.SerializeAsString();
-    // return boost::posix_time::to_simple_string(boost::posix_time::second_clock::local_time().time_of_day()) +
-    //   "|" + msg_contents + "|" + local_ip;
-  }
-
-  inline std::string msg_as_string(messages::ChatMessage& msg) {
-    return msg.timestamp() + " " + msg.sender_ip() + ": " + msg.msg_contents();
-  }
-
-  static std::string sent_message(const std::string& local_ip, const std::string& msg_contents) {
-    return boost::posix_time::to_simple_string(boost::posix_time::second_clock::local_time().time_of_day()) +
-      " " + local_ip + "(you): " + msg_contents;
-  }
-
+  if (!ec) return ChatError::OK;
+  if (ec == ssl::error::stream_truncated)
+    return ChatError::REMOTE_HOST_DISCONNECT;
+  return ChatError::UNKNOWN_ERROR;
 }
 
-#endif //CHAT_APP_UTIL_H
+static messages::ChatMessage deserialize_message(const std::string& payload) {
+  messages::ChatMessage deserialized;
+  deserialized.ParseFromString(payload);
+  return deserialized;
+}
+
+static std::string serialize_message(std::string local_ip,
+                                     const std::string& msg_contents) {
+  messages::ChatMessage msg;
+  auto timestamp = boost::posix_time::to_simple_string(
+      boost::posix_time::second_clock::local_time().time_of_day());
+  msg.set_timestamp(timestamp);
+  msg.set_msg_contents(msg_contents);
+  msg.set_sender_ip(local_ip);
+  return msg.SerializeAsString();
+}
+
+inline std::string msg_as_string(const messages::ChatMessage& msg) {
+  return msg.timestamp() + " " + msg.sender_ip() + ": " + msg.msg_contents();
+}
+
+static std::string sent_message(const std::string& local_ip,
+                                const std::string& msg_contents) {
+  return boost::posix_time::to_simple_string(
+             boost::posix_time::second_clock::local_time().time_of_day()) +
+         " " + local_ip + "(you): " + msg_contents;
+}
+
+}  // namespace util
+
+}  // namespace chat_lib
+
+#endif  // CHAT_APP_UTIL_H

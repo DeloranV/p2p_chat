@@ -1,8 +1,10 @@
 #include "gui/unavailable.h"
 
-Unavailable::Unavailable()
-  : AbstractView("unavailable")
-{
+namespace chat_exec {
+
+namespace gui {
+
+Unavailable::Unavailable() : AbstractView("unavailable") {
   unavailable_widget_.setupUi(this);
 }
 
@@ -10,8 +12,6 @@ QPushButton* Unavailable::get_OK_button() const {
   return unavailable_widget_.pushButton;
 }
 
-
-void Unavailable::somefunc() {
-
-}
-
+void Unavailable::somefunc() {}
+}  // namespace gui
+}  // namespace chat_exec

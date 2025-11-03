@@ -1,22 +1,20 @@
 #include <gtest/gtest.h>
-#include <future>
+
 #include <chrono>
+#include <future>
+
+#include "boost/asio.hpp"
 #include "network/client.h"
 #include "network/server.h"
-#include "boost/asio.hpp"
-#include "boost/thread.hpp" // TODO BOOST THREAD VS STD THREAD
 
 using boost::asio::ip::tcp;
 namespace ssl = boost::asio::ssl;
 typedef ssl::stream<tcp::socket> ssl_socket;
 
 class ServerClientIntegration : public testing::Test {
-protected:
-  ServerClientIntegration()
-    : server_(io_context_),
-      client_(io_context_)
-  {
-    server_thread_ = boost::thread([this] {
+ protected:
+  ServerClientIntegration() : server_(io_context_), client_(io_context_) {
+    server_thread_ = std::thread([this] {
       server_.await_connection([this](ssl_socket socket) {
         server_connect_success_.set_value(socket.lowest_layer().is_open());
       });
@@ -26,15 +24,14 @@ protected:
 
   ~ServerClientIntegration() override {
     io_context_.stop();
-    server_thread_.interrupt();
     server_thread_.join();
   }
 
   std::promise<bool> server_connect_success_;
   boost::asio::io_context io_context_;
-  networking::Server server_;
-  networking::Client client_;
-  boost::thread server_thread_;
+  chat_lib::networking::Server server_;
+  chat_lib::networking::Client client_;
+  std::thread server_thread_;
 };
 
 TEST_F(ServerClientIntegration, ConnectionHandshake) {

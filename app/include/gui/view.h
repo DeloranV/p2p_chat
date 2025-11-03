@@ -1,23 +1,22 @@
-//
-// Created by rolandpwrrt on 17.10.2025.
-//
-
 #ifndef CHAT_APP_VIEW_H
 #define CHAT_APP_VIEW_H
 
 #include <QtWidgets/QWidget>
-#include <QObject>
+
+namespace chat_exec {
+
+namespace gui {
 
 class AbstractView : public QWidget {
   Q_OBJECT
-public:
-  AbstractView(std::string name)
-    : view_name(std::move(name))
-  {}
+ public:
+  explicit AbstractView(std::string name) : view_name(std::move(name)) {}
 
   virtual void somefunc() = 0;
 
   const std::string view_name;
 };
+}  // namespace gui
+}  // namespace chat_exec
 
-#endif //CHAT_APP_VIEW_H
+#endif  // CHAT_APP_VIEW_H

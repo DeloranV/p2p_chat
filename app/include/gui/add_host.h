@@ -1,26 +1,28 @@
-//
-// Created by rolandpwrrt on 28.10.2025.
-//
-
 #ifndef CHAT_APP_ADD_HOST_H
 #define CHAT_APP_ADD_HOST_H
 
-#include "view.h"
 #include "ui/ui_add_host.h"
+#include "view.h"
+
+namespace chat_exec {
+
+namespace gui {
 
 class AddHost : public AbstractView {
-public:
+ public:
   AddHost();
   void somefunc() override;
-  QPushButton* get_cancel_button() const;
-  QPushButton* get_add_button() const;
-  QLineEdit* get_ip_line_edit() const;
-  QLineEdit* get_host_name_line_edit() const;
-  std::string get_host_ip() const;
-  std::string get_host_name() const;
+  [[nodiscard]] QPushButton* get_cancel_button() const;
+  [[nodiscard]] QPushButton* get_add_button() const;
+  [[nodiscard]] QLineEdit* get_ip_line_edit() const;
+  [[nodiscard]] QLineEdit* get_host_name_line_edit() const;
+  [[nodiscard]] std::string get_host_ip() const;
+  [[nodiscard]] std::string get_host_name() const;
 
-private:
+ private:
   Ui::add_host_widget add_host_widget_;
 };
+}  // namespace gui
+}  // namespace chat_exec
 
-#endif //CHAT_APP_ADD_HOST_H
+#endif  // CHAT_APP_ADD_HOST_H
