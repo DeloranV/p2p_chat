@@ -13,9 +13,9 @@ typedef ssl::stream<tcp::socket> ssl_socket;
 
 class ServerClientIntegration : public testing::Test {
  protected:
-  ServerClientIntegration() : server_(io_context_), client_(io_context_) {
+  ServerClientIntegration() : server_(new chat_lib::networking::Server(io_context_)), client_(io_context_) {
     server_thread_ = std::thread([this] {
-      server_.await_connection([this](ssl_socket socket) {
+      server_->await_connection([this](ssl_socket socket) {
         server_connect_success_.set_value(socket.lowest_layer().is_open());
       });
       io_context_.run();
@@ -29,7 +29,7 @@ class ServerClientIntegration : public testing::Test {
 
   std::promise<bool> server_connect_success_;
   boost::asio::io_context io_context_;
-  chat_lib::networking::Server server_;
+  std::shared_ptr<chat_lib::networking::Server> server_;
   chat_lib::networking::Client client_;
   std::thread server_thread_;
 };

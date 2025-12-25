@@ -54,7 +54,7 @@
       </layout>
      </item>
      <item>
-      <widget class="QListWidget" name="listWidget">
+      <widget class="QListWidget" name="hosts_list">
        <item>
         <property name="text">
          <string>Laptop-&gt;192.168.0.17</string>
@@ -83,14 +83,14 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="connect_button">
          <property name="text">
           <string>Connect</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_3">
+        <widget class="QPushButton" name="add_host_button">
          <property name="text">
           <string>Add host</string>
          </property>

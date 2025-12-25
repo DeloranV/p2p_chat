@@ -1,18 +1,14 @@
 #include "gui/disconnect.h"
 
-namespace chat_exec {
+namespace chat_exec::gui {
 
-namespace gui {
-
-Disconnect::Disconnect() : AbstractView("disconnect") {
+Disconnect::Disconnect() : disconnect_widget_() {
   disconnect_widget_.setupUi(this);
+  setup_connections();
 }
 
-QPushButton* Disconnect::get_OK_button() const {
-  return disconnect_widget_.pushButton;
+void Disconnect::setup_connections() {
+  connect(disconnect_widget_.ok_button, &QPushButton::clicked, this,
+          &Disconnect::ok_bttn_clicked);
 }
-
-void Disconnect::somefunc() {}
-
-}  // namespace gui
-}  // namespace chat_exec
+}  // namespace chat_exec::gui

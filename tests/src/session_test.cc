@@ -18,12 +18,12 @@ typedef ssl::stream<tcp::socket> ssl_socket;
 class ChatSessionIntegration : public testing::Test {
  protected:
   ChatSessionIntegration()
-      : server_(server_io_context_),
+      : server_(new chat_lib::networking::Server(server_io_context_)),
         client_(client_io_context_),
         server_msg_("Sent by server") {
     server_thread_ = std::thread([this] {
-      server_.await_connection([this](ssl_socket socket) {
-        server_session_ = std::make_unique<chat_lib::session::chat_session>(
+      server_->await_connection([this](ssl_socket socket) {
+        server_session_ = std::make_shared<chat_lib::session::chat_session>(
             server_io_context_, std::move(socket));
         server_session_->listen_msg([this](std::string,
                                            const chat_lib::util::ChatError,
@@ -48,9 +48,9 @@ class ChatSessionIntegration : public testing::Test {
   std::string server_msg_;
   boost::asio::io_context server_io_context_;
   boost::asio::io_context client_io_context_;
-  chat_lib::networking::Server server_;
-  std::unique_ptr<chat_lib::session::chat_session> server_session_;
-  std::unique_ptr<chat_lib::session::chat_session> client_session_;
+  std::shared_ptr<chat_lib::networking::Server> server_;
+  std::shared_ptr<chat_lib::session::chat_session> server_session_;
+  std::shared_ptr<chat_lib::session::chat_session> client_session_;
   chat_lib::networking::Client client_;
   std::thread server_thread_;
   std::thread client_thread_;
@@ -65,7 +65,7 @@ TEST_F(ChatSessionIntegration, MessageSendReceive) {
   std::string local_ip = "localhost";
 
   auto client_socket = client_.try_connect(local_ip);
-  client_session_ = std::make_unique<chat_lib::session::chat_session>(
+  client_session_ = std::make_shared<chat_lib::session::chat_session>(
       client_io_context_, std::move(client_socket));
   client_session_->listen_msg(
       [&client_received_msg](std::string, const chat_lib::util::ChatError,

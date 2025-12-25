@@ -9,22 +9,20 @@ find_package(Qt5 COMPONENTS
         Widgets
         REQUIRED)
 
-# TODO SOLVE THE .ui HEADERS HAVING TO BE ADDED HERE
+# (TODO #5) Solve the .ui files having to be added here
 add_executable(chat_exec
         ${CMAKE_CURRENT_SOURCE_DIR}/main.cc
         # app_core
         include/app_core/chat_controller.h
         src/app_core/chat_controller.cc
-        include/app_core/session_adapter.h
-        src/app_core/session_adapter.cc
         include/app_core/session_manager.h
         src/app_core/session_manager.cc
         # gui
         include/gui/add_host.h
         src/gui/add_host.cc
-        include/gui/chat_window.hpp
+        include/gui/chat_window.h
         src/gui/chat_window.cc
-        include/gui/gui_manager.hpp
+        include/gui/gui_manager.h
         src/gui/gui_manager.cc
         include/gui/main_menu.h
         src/gui/main_menu.cc
@@ -32,7 +30,6 @@ add_executable(chat_exec
         src/gui/unavailable.cc
         include/gui/disconnect.h
         src/gui/disconnect.cc
-        include/gui/view.h
         # ui
         ui/add_host.ui
         ui/chat_window.ui

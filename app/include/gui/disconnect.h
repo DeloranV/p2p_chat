@@ -2,22 +2,23 @@
 #define CHAT_APP_DISCONNECT_H
 
 #include "ui/ui_disconnect.h"
-#include "view.h"
 
-namespace chat_exec {
+namespace chat_exec::gui {
 
-namespace gui {
-
-class Disconnect : public AbstractView {
+///@brief Widget displaying a 'host disconnected' message with an 'OK' button.
+class Disconnect : public QWidget {
+  Q_OBJECT
  public:
   Disconnect();
-  void somefunc() override;
-  [[nodiscard]] QPushButton* get_OK_button() const;
+
+  Ui::disconnect_widget disconnect_widget_;
+
+ signals:
+  void ok_bttn_clicked();
 
  private:
-  Ui::disconnect_widget disconnect_widget_;
+  void setup_connections();
 };
-}  // namespace gui
-}  // namespace chat_exec
+}  // namespace chat_exec::gui
 
 #endif  // CHAT_APP_DISCONNECT_H

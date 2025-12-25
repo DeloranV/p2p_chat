@@ -11,8 +11,8 @@ add_library(core_lib STATIC
         src/crypto/cert_gen.cc
         src/util/message.pb.cc
 )
-# NEEDS TO BE PUBLIC SO THAT ANY OTHER TARGET LINKING AGAINST CORE LIB WILL ALSO GET ITS INCLUDE DIRECTORY ADDED
-# TO THEIR SEARCH PATHS (WON'T HAPPEN WITH PRIVATE)
+# Needs to be PUBLIC, so that any other target linking against core_lib will also get its include directory
+# added to their search paths (PRIVATE will prevent that from happening).
 target_include_directories(core_lib PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )

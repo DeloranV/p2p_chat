@@ -1,37 +1,23 @@
 #include "gui/add_host.h"
 
-namespace chat_exec {
-
-namespace gui {
-
-AddHost::AddHost() : AbstractView("add_host") {
+namespace chat_exec::gui {
+AddHost::AddHost() : add_host_widget_() {
   add_host_widget_.setupUi(this);
-}
-
-QPushButton* AddHost::get_add_button() const {
-  return add_host_widget_.pushButton;
-}
-
-QPushButton* AddHost::get_cancel_button() const {
-  return add_host_widget_.pushButton_2;
-}
-
-QLineEdit* AddHost::get_ip_line_edit() const {
-  return add_host_widget_.lineEdit_2;
-}
-
-QLineEdit* AddHost::get_host_name_line_edit() const {
-  return add_host_widget_.lineEdit;
+  setup_connections();
 }
 
 std::string AddHost::get_host_ip() const {
-  return get_ip_line_edit()->text().toStdString();
+  return add_host_widget_.ip_line_edit->text().toStdString();
 }
 
 std::string AddHost::get_host_name() const {
-  return get_host_name_line_edit()->text().toStdString();
+  return add_host_widget_.host_name_line_edit->text().toStdString();
 }
 
-void AddHost::somefunc() {}
-}  // namespace gui
-}  // namespace chat_exec
+void AddHost::setup_connections() {
+  connect(add_host_widget_.cancel_button, &QPushButton::clicked, this,
+          &AddHost::cancel_bttn_clicked);
+  connect(add_host_widget_.add_button, &QPushButton::clicked, this,
+          &AddHost::add_bttn_clicked);
+}
+}  // namespace chat_exec::gui

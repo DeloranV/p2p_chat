@@ -7,32 +7,28 @@
 
 #include "message.pb.h"
 
-namespace chat_lib {
-
-namespace util {
-
-enum Mode { SERVER, CLIENT, EXIT };
-enum ClientChoice { TARGET_IP, HOST_LIST };
-enum ListeningMode { PASSIVE, ACTIVE };
+namespace chat_lib::util {
 
 enum class ChatError { OK, REMOTE_HOST_DISCONNECT, UNKNOWN_ERROR };
 
-static ChatError translate_error(const boost::system::error_code& ec) {
+inline ChatError translate_error(const boost::system::error_code& ec) {
   namespace ssl = boost::asio::ssl;
 
   if (!ec) return ChatError::OK;
-  if (ec == ssl::error::stream_truncated)
+  if (ec == ssl::error::stream_truncated || ec == boost::asio::error::eof ||
+      ec == boost::asio::error::connection_reset ||
+      ec == boost::asio::error::broken_pipe)
     return ChatError::REMOTE_HOST_DISCONNECT;
   return ChatError::UNKNOWN_ERROR;
 }
 
-static messages::ChatMessage deserialize_message(const std::string& payload) {
+inline messages::ChatMessage deserialize_message(const std::string& payload) {
   messages::ChatMessage deserialized;
   deserialized.ParseFromString(payload);
   return deserialized;
 }
 
-static std::string serialize_message(std::string local_ip,
+inline std::string serialize_message(const std::string& local_ip,
                                      const std::string& msg_contents) {
   messages::ChatMessage msg;
   auto timestamp = boost::posix_time::to_simple_string(
@@ -46,16 +42,13 @@ static std::string serialize_message(std::string local_ip,
 inline std::string msg_as_string(const messages::ChatMessage& msg) {
   return msg.timestamp() + " " + msg.sender_ip() + ": " + msg.msg_contents();
 }
-
-static std::string sent_message(const std::string& local_ip,
+// (TODO) Formatted message should be its own type
+inline std::string sent_message(const std::string& local_ip,
                                 const std::string& msg_contents) {
   return boost::posix_time::to_simple_string(
              boost::posix_time::second_clock::local_time().time_of_day()) +
          " " + local_ip + "(you): " + msg_contents;
 }
-
-}  // namespace util
-
-}  // namespace chat_lib
+}  // namespace chat_lib::util
 
 #endif  // CHAT_APP_UTIL_H

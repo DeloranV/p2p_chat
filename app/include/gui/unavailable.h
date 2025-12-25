@@ -2,22 +2,23 @@
 #define CHAT_APP_UNAVAILABLE_H
 
 #include "ui/ui_unavailable.h"
-#include "view.h"
 
-namespace chat_exec {
+namespace chat_exec::gui {
 
-namespace gui {
-
-class Unavailable : public AbstractView {
+/// @brief Widget displaying a 'host unavailable' message with an 'OK' button.
+class Unavailable : public QWidget {
+  Q_OBJECT
  public:
   Unavailable();
-  void somefunc() override;
-  [[nodiscard]] QPushButton* get_OK_button() const;
+
+  Ui::unavailable_widget unavailable_widget_;
+
+ signals:
+  void ok_bttn_clicked();
 
  private:
-  Ui::unavailable_widget unavailable_widget_;
+  void setup_connections();
 };
-}  // namespace gui
-}  // namespace chat_exec
+}  // namespace chat_exec::gui
 
 #endif  // CHAT_APP_UNAVAILABLE_H
