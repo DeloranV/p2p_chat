@@ -18,9 +18,9 @@ A multithreaded TCP chat application featuring Protobuf and boost::asio based co
 | Main Menu | Chat Window |
 |:---:|:---:|
 | *[<img width="499" height="426" alt="Screenshot from 2025-12-30 16-34-38" src="https://github.com/user-attachments/assets/c7cba487-bccc-49f3-85c2-33fb95f9904f" />
-]* | *<img width="499" <img width="405" height="260" alt="Screenshot from 2025-12-30 16-36-02" src="https://github.com/user-attachments/assets/e9ecc4e1-d36c-4f33-9736-46119729ae15" />
-height="426" alt="Screens<img width="499" height="426" alt="Screenshot from 2025-12-30 16-34-54" src="https://github.com/user-attachments/assets/f41538f1-6525-4487-9a44-285f25658911" />
-hot from 2025-12-30 16-35-35" src="https://github.com/user-attachments/assets/59ab8458-f35b-4372-a773-2b833531decb" />
+]* | *<img width="405" height="260" alt="Screenshot from 2025-12-30 16-36-02" src="https://github.com/user-attachments/assets/e9ecc4e1-d36c-4f33-9736-46119729ae15" />
+<img width="499" height="426" alt="Screenshot from 2025-12-30 16-34-54" src="https://github.com/user-attachments/assets/f41538f1-6525-4487-9a44-285f25658911" />
+
 * |
 | *Manage hosts and connections* | *Real-time messaging interface* |
 
