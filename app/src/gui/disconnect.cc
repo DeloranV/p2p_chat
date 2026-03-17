@@ -4,11 +4,11 @@ namespace chat_exec::gui {
 
 Disconnect::Disconnect() : disconnect_widget_() {
   disconnect_widget_.setupUi(this);
-  setup_connections();
+  SetupConnections();
 }
 
-void Disconnect::setup_connections() {
+void Disconnect::SetupConnections() {
   connect(disconnect_widget_.ok_button, &QPushButton::clicked, this,
-          &Disconnect::ok_bttn_clicked);
+          &Disconnect::OKBttnClicked);
 }
 }  // namespace chat_exec::gui

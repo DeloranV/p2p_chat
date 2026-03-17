@@ -1,5 +1,5 @@
-#ifndef CHAT_APP_APP_H
-#define CHAT_APP_APP_H
+#ifndef P2P_CHAT_APP_APP_CORE_CHAT_CONTROLLER_H_
+#define P2P_CHAT_APP_APP_CORE_CHAT_CONTROLLER_H_
 
 #include <boost/asio.hpp>
 #include <memory>
@@ -24,19 +24,19 @@ class ChatController : public QObject {
   Q_OBJECT
  public:
   explicit ChatController(boost::asio::io_context& io_context);
-  void run();
+  void Run();
   ~ChatController() override;
 
  public slots:
-  void start_client();
-  void setup_server();
-  void open_chat(const std::string& target_ip);
+  void StartClient();
+  void SetupServer();
+  void OpenChat(const std::string& target_ip);
 
  signals:
-  void chat_window_opened();
+  void ChatWindowOpened();
 
  private:
-  void start_io_context();
+  void StartIOContext();
 
   boost::asio::io_context& io_context_;
   std::thread io_thread_;
@@ -47,4 +47,4 @@ class ChatController : public QObject {
 };
 }  // namespace chat_exec::core
 
-#endif  // CHAT_APP_APP_H
+#endif  // P2P_CHAT_APP_APP_CORE_CHAT_CONTROLLER_H_

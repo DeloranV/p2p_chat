@@ -10,29 +10,29 @@ GuiManager::GuiManager()
       unavailable_(std::make_unique<Unavailable>()),
       add_host_(std::make_unique<AddHost>()),
       disconnect_(std::make_unique<Disconnect>()) {
-  setup_connections();
-  setup_object_names();
-  open_main_menu();
+  SetupConnections();
+  SetupObjectNames();
+  OpenMainMenu();
 }
 
-void GuiManager::setup_connections() {
-  connect(main_menu_.get(), &MainMenu::add_host_bttn_clicked, this,
-          &GuiManager::open_add_host);
-  connect(add_host_.get(), &AddHost::cancel_bttn_clicked, this,
-          &GuiManager::go_back);
-  connect(add_host_.get(), &AddHost::add_bttn_clicked, this,
-          &GuiManager::new_host_added);
-  connect(main_menu_.get(), &MainMenu::connect_bttn_clicked, this,
-          &GuiManager::chat_window_opened_wrapper);
-  connect(unavailable_.get(), &Unavailable::ok_bttn_clicked, this,
-          &GuiManager::go_back);
-  connect(disconnect_.get(), &Disconnect::ok_bttn_clicked, this,
-          &GuiManager::go_back_to_menu);
-  connect(chat_window_.get(), &ChatWindow::send_bttn_clicked, this,
-          &GuiManager::emit_sent_msg);
+void GuiManager::SetupConnections() {
+  connect(main_menu_.get(), &MainMenu::AddHostBttnClicked, this,
+          &GuiManager::OpenAddHost);
+  connect(add_host_.get(), &AddHost::CancelBttnClicked, this,
+          &GuiManager::GoBack);
+  connect(add_host_.get(), &AddHost::AddBttnClicked, this,
+          &GuiManager::NewHostAdded);
+  connect(main_menu_.get(), &MainMenu::ConnectBttnClicked, this,
+          &GuiManager::ChatWindowOpenedWrapper);
+  connect(unavailable_.get(), &Unavailable::OKBttnClicked, this,
+          &GuiManager::GoBack);
+  connect(disconnect_.get(), &Disconnect::OKBttnClicked, this,
+          &GuiManager::GoBackToMenu);
+  connect(chat_window_.get(), &ChatWindow::SendBttnClicked, this,
+          &GuiManager::EmitSentMsg);
 }
 
-void GuiManager::setup_object_names() {
+void GuiManager::SetupObjectNames() {
   main_menu_->setObjectName("main_menu");
   add_host_->setObjectName("add_host");
   chat_window_->setObjectName("chat_window");
@@ -40,28 +40,28 @@ void GuiManager::setup_object_names() {
   disconnect_->setObjectName("disconnect");
 }
 
-void GuiManager::chat_window_opened_wrapper() {
-  emit chat_window_opened(get_host_ip());
+void GuiManager::ChatWindowOpenedWrapper() {
+  emit ChatWindowOpened(GetHostIP());
 }
 
-void GuiManager::new_host_added() {
-  auto new_host_name = add_host_->get_host_name();
-  auto new_host_ip = add_host_->get_host_ip();
-  main_menu_->add_new_host(new_host_name, new_host_ip);
-  go_back();
+void GuiManager::NewHostAdded() {
+  auto new_host_name = add_host_->GetHostName();
+  auto new_host_ip = add_host_->GetHostIP();
+  main_menu_->AddNewHost(new_host_name, new_host_ip);
+  GoBack();
 }
 
-std::string GuiManager::get_host_ip() const {
-  return main_menu_->get_selected_host();
+std::string GuiManager::GetHostIP() const {
+  return main_menu_->GetSelectedHost();
 }
 
-void GuiManager::go_into(QWidget* dst) {
+void GuiManager::GoInto(QWidget* dst) {
   if (!nav_stack_.empty()) nav_stack_.top()->hide();
   nav_stack_.push(dst);
   nav_stack_.top()->show();
 }
 
-void GuiManager::go_back() {
+void GuiManager::GoBack() {
   if (nav_stack_.size() > 1) {
     nav_stack_.top()->hide();
     nav_stack_.pop();
@@ -69,7 +69,7 @@ void GuiManager::go_back() {
   }
 }
 
-void GuiManager::go_back_to_menu() {
+void GuiManager::GoBackToMenu() {
   if (!nav_stack_.empty()) {
     nav_stack_.top()->hide();
     while (nav_stack_.size() > 1 &&
@@ -79,18 +79,18 @@ void GuiManager::go_back_to_menu() {
   }
 }
 
-void GuiManager::emit_sent_msg() {
-  auto msg = chat_window_->get_message();
-  emit message_sent(msg);
+void GuiManager::EmitSentMsg() {
+  auto msg = chat_window_->GetMessage();
+  emit MessageSent(msg);
 }
 
-void GuiManager::display_received_msg(QString msg) {
-  chat_window_->display_message(msg.toStdString());
+void GuiManager::DisplayReceivedMsg(QString msg) {
+  chat_window_->DisplayMessage(msg.toStdString());
 }
 
-void GuiManager::open_main_menu() { go_into(main_menu_.get()); }
-void GuiManager::open_chat_window() { go_into(chat_window_.get()); }
-void GuiManager::open_unavailable() { go_into(unavailable_.get()); }
-void GuiManager::open_add_host() { go_into(add_host_.get()); }
-void GuiManager::open_host_disconnected() { go_into(disconnect_.get()); }
+void GuiManager::OpenMainMenu() { GoInto(main_menu_.get()); }
+void GuiManager::OpenChatWindow() { GoInto(chat_window_.get()); }
+void GuiManager::OpenUnavailable() { GoInto(unavailable_.get()); }
+void GuiManager::OpenAddHost() { GoInto(add_host_.get()); }
+void GuiManager::OpenHostDisconnected() { GoInto(disconnect_.get()); }
 }  // namespace chat_exec::gui

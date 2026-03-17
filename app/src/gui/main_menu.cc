@@ -6,7 +6,7 @@ namespace chat_exec::gui {
 
 MainMenu::MainMenu() : main_menu_widget_() {
   main_menu_widget_.setupUi(this);
-  setup_connections();
+  SetupConnections();
 
   // (TODO) These are for development purposes only - no way to bake-in in Qt
   // Designer
@@ -20,7 +20,7 @@ MainMenu::MainMenu() : main_menu_widget_() {
   }
 }
 
-void MainMenu::add_new_host(std::string hostname, std::string ip_addr) {
+void MainMenu::AddNewHost(std::string hostname, std::string ip_addr) {
   auto host_display_name = hostname + "->" + ip_addr;
   auto added_host =  // Might show a leaked memory warning - it has the
                      // hosts_list as parent so Qt cleans it up
@@ -29,7 +29,7 @@ void MainMenu::add_new_host(std::string hostname, std::string ip_addr) {
   added_host->setData(Qt::UserRole, QString::fromStdString(ip_addr));
 }
 
-std::string MainMenu::get_selected_host() const {
+std::string MainMenu::GetSelectedHost() const {
   auto selected_item = main_menu_widget_.hosts_list->currentItem();
   if (selected_item == nullptr) return "";
 
@@ -37,10 +37,10 @@ std::string MainMenu::get_selected_host() const {
   return ip_addr;
 }
 
-void MainMenu::setup_connections() {
+void MainMenu::SetupConnections() {
   connect(main_menu_widget_.add_host_button, &QPushButton::clicked, this,
-          &MainMenu::add_host_bttn_clicked);
+          &MainMenu::AddHostBttnClicked);
   connect(main_menu_widget_.connect_button, &QPushButton::clicked, this,
-          &MainMenu::connect_bttn_clicked);
+          &MainMenu::ConnectBttnClicked);
 }
 }  // namespace chat_exec::gui

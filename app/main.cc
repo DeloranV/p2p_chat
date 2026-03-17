@@ -7,6 +7,6 @@ int main(int argc, char* argv[]) {
   boost::asio::io_context io_context;
   QApplication a(argc, argv);
   chat_exec::core::ChatController chat(io_context);
-  chat.run();
+  chat.Run();
   return QApplication::exec();
 }

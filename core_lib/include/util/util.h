@@ -1,5 +1,5 @@
-#ifndef CHAT_APP_UTIL_H
-#define CHAT_APP_UTIL_H
+#ifndef P2P_CHAT_CORE_LIB_UTIL_UTIL_H_
+#define P2P_CHAT_CORE_LIB_UTIL_UTIL_H_
 
 #include <boost/asio/ssl.hpp>
 #include <boost/date_time.hpp>
@@ -9,26 +9,26 @@
 
 namespace chat_lib::util {
 
-enum class ChatError { OK, REMOTE_HOST_DISCONNECT, UNKNOWN_ERROR };
+enum class ChatError { kOk, kRemoteHostDisconnect, kUnknownError };
 
-inline ChatError translate_error(const boost::system::error_code& ec) {
+inline ChatError TranslateError(const boost::system::error_code& ec) {
   namespace ssl = boost::asio::ssl;
 
-  if (!ec) return ChatError::OK;
+  if (!ec) return ChatError::kOk;
   if (ec == ssl::error::stream_truncated || ec == boost::asio::error::eof ||
       ec == boost::asio::error::connection_reset ||
       ec == boost::asio::error::broken_pipe)
-    return ChatError::REMOTE_HOST_DISCONNECT;
-  return ChatError::UNKNOWN_ERROR;
+    return ChatError::kRemoteHostDisconnect;
+  return ChatError::kUnknownError;
 }
 
-inline messages::ChatMessage deserialize_message(const std::string& payload) {
+inline messages::ChatMessage DeserializeMessage(const std::string& payload) {
   messages::ChatMessage deserialized;
   deserialized.ParseFromString(payload);
   return deserialized;
 }
 
-inline std::string serialize_message(const std::string& local_ip,
+inline std::string SerializeMessage(const std::string& local_ip,
                                      const std::string& msg_contents) {
   messages::ChatMessage msg;
   auto timestamp = boost::posix_time::to_simple_string(
@@ -39,11 +39,11 @@ inline std::string serialize_message(const std::string& local_ip,
   return msg.SerializeAsString();
 }
 
-inline std::string msg_as_string(const messages::ChatMessage& msg) {
+inline std::string MsgAsString(const messages::ChatMessage& msg) {
   return msg.timestamp() + " " + msg.sender_ip() + ": " + msg.msg_contents();
 }
 // (TODO) Formatted message should be its own type
-inline std::string sent_message(const std::string& local_ip,
+inline std::string SentMsg(const std::string& local_ip,
                                 const std::string& msg_contents) {
   return boost::posix_time::to_simple_string(
              boost::posix_time::second_clock::local_time().time_of_day()) +
@@ -51,4 +51,4 @@ inline std::string sent_message(const std::string& local_ip,
 }
 }  // namespace chat_lib::util
 
-#endif  // CHAT_APP_UTIL_H
+#endif  // P2P_CHAT_CORE_LIB_UTIL_UTIL_H_

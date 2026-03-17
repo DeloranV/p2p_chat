@@ -15,7 +15,7 @@ class ServerClientIntegration : public testing::Test {
  protected:
   ServerClientIntegration() : server_(new chat_lib::networking::Server(io_context_)), client_(io_context_) {
     server_thread_ = std::thread([this] {
-      server_->await_connection([this](ssl_socket socket) {
+      server_->AwaitConnection([this](ssl_socket socket) {
         server_connect_success_.set_value(socket.lowest_layer().is_open());
       });
       io_context_.run();
@@ -39,7 +39,7 @@ TEST_F(ServerClientIntegration, ConnectionHandshake) {
   std::string local_ip = "localhost";
   bool client_connect_success = false;
 
-  auto client_socket = client_.try_connect(local_ip);
+  auto client_socket = client_.TryConnect(local_ip);
   client_connect_success = client_socket.lowest_layer().is_open();
 
   server_f.wait_for(std::chrono::seconds(1));

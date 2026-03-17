@@ -1,5 +1,5 @@
-#ifndef CHAT_WINDOW_HPP
-#define CHAT_WINDOW_HPP
+#ifndef P2P_CHAT_APP_GUI_CHAT_WINDOW_H_
+#define P2P_CHAT_APP_GUI_CHAT_WINDOW_H_
 
 #include "ui/ui_chat_window.h"
 
@@ -22,19 +22,19 @@ class ChatWindow : public QWidget {
    * @param msg A deserialized and properly formatted string to be displayed
    * in the message history.
    */
-  void display_message(std::string msg);  // (TODO) See util.h in core_lib
+  void DisplayMessage(std::string msg);  // (TODO) See util.h in core_lib
 
   /// @brief Returns the message string which was typed into the textbox.
-  [[nodiscard]] QString get_message() const;
+  [[nodiscard]] QString GetMessage() const;
 
   Ui::chat_window chat_window;
 
  signals:
-  void send_bttn_clicked();
+  void SendBttnClicked();
 
  private:
-  void setup_connections();
+  void SetupConnections();
 };
 }  // namespace chat_exec::gui
 
-#endif  // CHAT_WINDOW_HPP
+#endif  // P2P_CHAT_APP_GUI_CHAT_WINDOW_H_

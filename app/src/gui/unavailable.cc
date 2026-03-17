@@ -4,11 +4,11 @@ namespace chat_exec::gui {
 
 Unavailable::Unavailable() : unavailable_widget_() {
   unavailable_widget_.setupUi(this);
-  setup_connections();
+  SetupConnected();
 }
 
-void Unavailable::setup_connections() {
+void Unavailable::SetupConnected() {
   connect(unavailable_widget_.ok_button, &QPushButton::clicked, this,
-          &Unavailable::ok_bttn_clicked);
+          &Unavailable::OKBttnClicked);
 }
 }  // namespace chat_exec::gui

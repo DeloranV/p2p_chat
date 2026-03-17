@@ -14,10 +14,10 @@ class MsgSerializationTest : public testing::Test {
 TEST_F(MsgSerializationTest, SerializedToDeserialized) {
   auto timestamp = boost::posix_time::to_simple_string(
       boost::posix_time::second_clock::local_time().time_of_day());
-  auto serialized = chat_lib::util::serialize_message(msg_ip, msg_contents);
-  auto deserialized = chat_lib::util::deserialize_message(serialized);
+  auto serialized = chat_lib::util::SerializeMessage(msg_ip, msg_contents);
+  auto deserialized = chat_lib::util::DeserializeMessage(serialized);
 
-  auto deserialized_str = chat_lib::util::msg_as_string(deserialized);
+  auto deserialized_str = chat_lib::util::MsgAsString(deserialized);
   auto expected = timestamp + " " + msg_ip + ": " + msg_contents;
 
   EXPECT_EQ(deserialized_str, expected);

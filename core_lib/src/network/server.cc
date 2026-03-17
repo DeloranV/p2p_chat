@@ -6,26 +6,26 @@ namespace chat_lib::networking {
 
 Server::Server(boost::asio::io_context& io_context)
     : io_context_(io_context),
-      ctx(ssl::context::sslv23),
+      ctx_(ssl::context::sslv23),
       acceptor_(tcp::acceptor(
           io_context,
           tcp::endpoint(tcp::v4(), 33333)))  // (TODO #2) Move port to global config
 {
   crypto::create_private_key();
-  configure_tls();
+  ConfigureTLS();
 }
 
 Server::~Server() { acceptor_.close(); }
 
-void Server::configure_tls() {
-  ctx.set_options(ssl::context::default_workarounds | ssl::context::no_sslv2 |
+void Server::ConfigureTLS() {
+  ctx_.set_options(ssl::context::default_workarounds | ssl::context::no_sslv2 |
                   ssl::context::single_dh_use);
-  ctx.use_certificate_chain_file("cert.pem");
-  ctx.use_private_key_file("key.pem", ssl::context::pem);
+  ctx_.use_certificate_chain_file("cert.pem");
+  ctx_.use_private_key_file("key.pem", ssl::context::pem);
 }
 
-void Server::await_connection(const acceptor_handler_t& callback) {
-  auto s_socket = std::make_shared<ssl_socket>(io_context_, ctx);
+void Server::AwaitConnection(const AcceptorHandler& callback) {
+  auto s_socket = std::make_shared<SSLSocket>(io_context_, ctx_);
 
   acceptor_.async_accept(
       s_socket->lowest_layer(),
@@ -39,7 +39,7 @@ void Server::await_connection(const acceptor_handler_t& callback) {
                 if (!error) callback(std::move(*s_socket));
               });
         }
-        shared_this->await_connection(callback);
+        shared_this->AwaitConnection(callback);
       });
 }
 };  // namespace chat_lib::networking

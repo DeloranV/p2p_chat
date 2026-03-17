@@ -9,31 +9,31 @@ namespace chat_exec::core {
 SessionManager::SessionManager(boost::asio::io_context& io_context)
     : io_context_(io_context) {}
 
-chat_lib::session::chat_session* SessionManager::get_session(
+chat_lib::session::ChatSession* SessionManager::GetSession(
     const std::string& remote_host_ip) {
   return sessions_[remote_host_ip].get();
 }
 
-void SessionManager::message_sent(const QString& msg) {
-  auto displayed = chat_lib::util::sent_message(
-      current_session_->get_local_address(), msg.toStdString());
-  emit message_received(QString::fromStdString(displayed));
-  current_session_->send_msg(msg.toStdString());
+void SessionManager::MessageSent(const QString& msg) {
+  auto displayed = chat_lib::util::SentMsg(
+      current_session_->GetLocalAddress(), msg.toStdString());
+  emit MessageReceived(QString::fromStdString(displayed));
+  current_session_->SendMsg(msg.toStdString());
 }
 
-bool SessionManager::is_session_active(const std::string& remote_host_ip) {
+bool SessionManager::IsSessionActive(const std::string& remote_host_ip) {
   return (sessions_.find(remote_host_ip) != sessions_.end());
 }
 
-void SessionManager::close_session(const std::string& remote_host_ip) {
-  sessions_[remote_host_ip]->stop();
+void SessionManager::CloseSession(const std::string& remote_host_ip) {
+  sessions_[remote_host_ip]->Stop();
   sessions_.erase(remote_host_ip);
 }
 
-void SessionManager::start_session(chat_lib::session::ssl_socket socket) {
+void SessionManager::StartSession(chat_lib::session::SSLSocket socket) {
   auto remote_host_ip =
       socket.lowest_layer().remote_endpoint().address().to_string();
-  auto new_session = std::make_shared<chat_lib::session::chat_session>(
+  auto new_session = std::make_shared<chat_lib::session::ChatSession>(
       io_context_, std::move(socket));
 
   {
@@ -42,16 +42,16 @@ void SessionManager::start_session(chat_lib::session::ssl_socket socket) {
     sessions_[remote_host_ip] = new_session;
   }
 
-  new_session->listen_msg([this](const std::string& remote_endpoint,
+  new_session->ListenMsg([this](const std::string& remote_endpoint,
                                  const chat_lib::util::ChatError err,
                                  const messages::ChatMessage& msg) {
-    if (err == chat_lib::util::ChatError::REMOTE_HOST_DISCONNECT) {
-      host_disconnect();
-      close_session(remote_endpoint);
+    if (err == chat_lib::util::ChatError::kRemoteHostDisconnect) {
+      HostDisconnect();
+      CloseSession(remote_endpoint);
       return;
     }
-    auto msg_content = chat_lib::util::msg_as_string(msg);
-    message_received(QString::fromStdString(msg_content));
+    auto msg_content = chat_lib::util::MsgAsString(msg);
+    MessageReceived(QString::fromStdString(msg_content));
   });
 }
 }  // namespace chat_exec::core

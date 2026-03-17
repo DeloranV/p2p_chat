@@ -7,57 +7,57 @@
 
 namespace chat_lib::session {
 
-chat_session::chat_session(boost::asio::io_context& io_context,
-                           ssl_socket socket)
+ChatSession::ChatSession(boost::asio::io_context& io_context,
+                           SSLSocket socket)
     : socket_(std::move(socket)),
       remote_endpoint_address_(
           socket_.lowest_layer().remote_endpoint().address().to_string()),
       io_context_(io_context),
       rx_buf_() {}
 
-void chat_session::stop() {
+void ChatSession::Stop() {
   socket_.lowest_layer().shutdown(tcp::socket::shutdown_both);
   socket_.lowest_layer().close();
 }
 
-chat_session::chat_session(chat_session&& session) noexcept
+ChatSession::ChatSession(ChatSession&& session) noexcept
     : socket_(std::move(session.socket_)),
       remote_endpoint_address_(std::move(session.remote_endpoint_address_)),
       io_context_(session.io_context_),
       rx_buf_(session.rx_buf_) {}
 
-std::string chat_session::get_local_address() {
+std::string ChatSession::GetLocalAddress() {
   return socket_.lowest_layer().local_endpoint().address().to_string();
 }
 
-std::string chat_session::get_remote_address() {
+std::string ChatSession::GetRemoteAddress() {
   return remote_endpoint_address_;
 }
 
-void chat_session::send_msg(const std::string& msg) {
+void ChatSession::SendMsg(const std::string& msg) {
   io_context_.post([shared_this = shared_from_this(), msg] {
     boost::system::error_code error;
     std::string payload =
-        util::serialize_message(shared_this->get_local_address(), msg);
+        util::SerializeMessage(shared_this->GetLocalAddress(), msg);
 
     shared_this->socket_.write_some(boost::asio::buffer(payload), error);
   });
 }
 
-void chat_session::listen_msg(const msg_handler_t& handler) {
+void ChatSession::ListenMsg(const MsgHandler& handler) {
   socket_.async_read_some(
       boost::asio::buffer(rx_buf_), [shared_this = shared_from_this(), handler](
                                         const boost::system::error_code& error,
                                         std::size_t bytes_transferred) {
-        auto err_c = util::translate_error(error);
-        if (err_c != util::ChatError::OK) {
+        auto err_c = util::TranslateError(error);
+        if (err_c != util::ChatError::kOk) {
           handler(shared_this->remote_endpoint_address_, err_c, {});
           return;
         }
         std::string serialized(shared_this->rx_buf_.data(), bytes_transferred);
-        auto deserialized = util::deserialize_message(serialized);
+        auto deserialized = util::DeserializeMessage(serialized);
         handler(shared_this->remote_endpoint_address_, err_c, deserialized);
-        shared_this->listen_msg(handler);
+        shared_this->ListenMsg(handler);
       });
 }
 }  // namespace chat_lib::session

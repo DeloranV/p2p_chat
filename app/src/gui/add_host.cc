@@ -3,21 +3,21 @@
 namespace chat_exec::gui {
 AddHost::AddHost() : add_host_widget_() {
   add_host_widget_.setupUi(this);
-  setup_connections();
+  SetupConnections();
 }
 
-std::string AddHost::get_host_ip() const {
+std::string AddHost::GetHostIP() const {
   return add_host_widget_.ip_line_edit->text().toStdString();
 }
 
-std::string AddHost::get_host_name() const {
+std::string AddHost::GetHostName() const {
   return add_host_widget_.host_name_line_edit->text().toStdString();
 }
 
-void AddHost::setup_connections() {
+void AddHost::SetupConnections() {
   connect(add_host_widget_.cancel_button, &QPushButton::clicked, this,
-          &AddHost::cancel_bttn_clicked);
+          &AddHost::CancelBttnClicked);
   connect(add_host_widget_.add_button, &QPushButton::clicked, this,
-          &AddHost::add_bttn_clicked);
+          &AddHost::AddBttnClicked);
 }
 }  // namespace chat_exec::gui

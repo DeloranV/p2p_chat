@@ -1,5 +1,5 @@
-#ifndef CHAT_APP_CLIENT_H
-#define CHAT_APP_CLIENT_H
+#ifndef P2P_CHAT_CORE_LIB_NETWORK_CLIENT_H_
+#define P2P_CHAT_CORE_LIB_NETWORK_CLIENT_H_
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
 
@@ -7,7 +7,7 @@ namespace chat_lib::networking {
 
 using boost::asio::ip::tcp;
 namespace ssl = boost::asio::ssl;
-typedef ssl::stream<tcp::socket> ssl_socket;
+typedef ssl::stream<tcp::socket> SSLSocket;
 
 /// @brief Manages the client-side connection logic.
 /**
@@ -28,7 +28,7 @@ class Client {
    * @param target_ip The IPv4 address of the chat server.
    * @return A ready to use, connected and verified ssl_socket.
    */
-  [[nodiscard]] ssl_socket try_connect(const std::string& target_ip);
+  [[nodiscard]] SSLSocket TryConnect(const std::string& target_ip);
 
  private:
   boost::asio::io_context& io_context_;
@@ -39,4 +39,4 @@ class Client {
 
 // namespace networking
 
-#endif  // CHAT_APP_CLIENT_H
+#endif  // P2P_CHAT_CORE_LIB_NETWORK_CLIENT_H_

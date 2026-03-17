@@ -1,5 +1,5 @@
-#ifndef CHAT_APP_DISCONNECT_H
-#define CHAT_APP_DISCONNECT_H
+#ifndef P2P_CHAT_APP_GUI_DISCONNECT_H_
+#define P2P_CHAT_APP_GUI_DISCONNECT_H_
 
 #include "ui/ui_disconnect.h"
 
@@ -14,11 +14,11 @@ class Disconnect : public QWidget {
   Ui::disconnect_widget disconnect_widget_;
 
  signals:
-  void ok_bttn_clicked();
+  void OKBttnClicked();
 
  private:
-  void setup_connections();
+  void SetupConnections();
 };
 }  // namespace chat_exec::gui
 
-#endif  // CHAT_APP_DISCONNECT_H
+#endif  // P2P_CHAT_APP_GUI_DISCONNECT_H_

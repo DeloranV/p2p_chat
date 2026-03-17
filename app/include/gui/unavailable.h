@@ -1,5 +1,5 @@
-#ifndef CHAT_APP_UNAVAILABLE_H
-#define CHAT_APP_UNAVAILABLE_H
+#ifndef P2P_CHAT_APP_GUI_UNAVAILABLE_H_
+#define P2P_CHAT_APP_GUI_UNAVAILABLE_H_
 
 #include "ui/ui_unavailable.h"
 
@@ -14,11 +14,11 @@ class Unavailable : public QWidget {
   Ui::unavailable_widget unavailable_widget_;
 
  signals:
-  void ok_bttn_clicked();
+  void OKBttnClicked();
 
  private:
-  void setup_connections();
+  void SetupConnected();
 };
 }  // namespace chat_exec::gui
 
-#endif  // CHAT_APP_UNAVAILABLE_H
+#endif  // P2P_CHAT_APP_GUI_UNAVAILABLE_H_

@@ -1,5 +1,5 @@
-#ifndef CHAT_APP_SESSION_MANAGR_H
-#define CHAT_APP_SESSION_MANAGR_H
+#ifndef P2P_CHAT_APP_APP_CORE_SESSION_MANAGER_H_
+#define P2P_CHAT_APP_APP_CORE_SESSION_MANAGER_H_
 
 #include <QObject>
 #include <mutex>
@@ -19,28 +19,28 @@ class SessionManager : public QObject {
  public:
   explicit SessionManager(boost::asio::io_context& io_context);
 
-  void start_session(chat_lib::session::ssl_socket socket);
-  void close_session(const std::string& remote_host_ip);
-  [[nodiscard]] chat_lib::session::chat_session* get_session(
+  void StartSession(chat_lib::session::SSLSocket socket);
+  void CloseSession(const std::string& remote_host_ip);
+  [[nodiscard]] chat_lib::session::ChatSession* GetSession(
       const std::string& remote_host_ip);
-  [[nodiscard]] bool is_session_active(const std::string& remote_host_ip);
+  [[nodiscard]] bool IsSessionActive(const std::string& remote_host_ip);
 
  public slots:
-  void message_sent(const QString& msg);
+  void MessageSent(const QString& msg);
 
  signals:
-  void message_received(QString msg);
-  void host_disconnect();
+  void MessageReceived(QString msg);
+  void HostDisconnect();
 
  private:
   boost::asio::io_context& io_context_;
   std::mutex mutex_;
   std::unordered_map<std::string,
-                     std::shared_ptr<chat_lib::session::chat_session>>
+                     std::shared_ptr<chat_lib::session::ChatSession>>
       sessions_;
-  std::shared_ptr<chat_lib::session::chat_session> current_session_;
+  std::shared_ptr<chat_lib::session::ChatSession> current_session_;
 };
 
 }  // namespace chat_exec::core
 
-#endif  // CHAT_APP_SESSION_MANAGR_H
+#endif  // P2P_CHAT_APP_APP_CORE_SESSION_MANAGER_H_

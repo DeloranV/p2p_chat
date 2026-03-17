@@ -1,5 +1,5 @@
-#ifndef CHAT_APP_SERVER_H
-#define CHAT_APP_SERVER_H
+#ifndef P2P_CHAT_CORE_LIB_NETWORK_SERVER_H_
+#define P2P_CHAT_CORE_LIB_NETWORK_SERVER_H_
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
 #include <memory>
@@ -8,8 +8,8 @@ namespace chat_lib::networking {
 
 using boost::asio::ip::tcp;
 namespace ssl = boost::asio::ssl;
-typedef ssl::stream<tcp::socket> ssl_socket;
-using acceptor_handler_t = std::function<void(ssl_socket)>;
+typedef ssl::stream<tcp::socket> SSLSocket;
+using AcceptorHandler = std::function<void(SSLSocket)>;
 
 /// @brief A TCP server that asynchronously accepts incoming SSL/TLS connections
 /**
@@ -32,15 +32,15 @@ class Server : public std::enable_shared_from_this<Server> {
    *        Callback should have a following signature:
    *        @code void handler(ssl_socket)@endcode
    */
-  void await_connection(const acceptor_handler_t& callback);
+  void AwaitConnection(const AcceptorHandler& callback);
 
  private:
-  void configure_tls();
+  void ConfigureTLS();
 
   boost::asio::io_context& io_context_;
-  ssl::context ctx;
+  ssl::context ctx_;
   tcp::acceptor acceptor_;
 };
 }  // namespace chat_lib::networking
 
-#endif  // CHAT_APP_SERVER_H
+#endif  // P2P_CHAT_CORE_LIB_NETWORK_SERVER_H_

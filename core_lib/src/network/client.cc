@@ -11,8 +11,8 @@ Client::Client(boost::asio::io_context &io_context)
       ctx_(ssl::context::sslv23),
       resolver_(io_context) {}
 
-ssl_socket Client::try_connect(const std::string &target_ip) {
-  ssl_socket socket(io_context_, ctx_);
+SSLSocket Client::TryConnect(const std::string &target_ip) {
+  SSLSocket socket(io_context_, ctx_);
   socket.set_verify_mode(ssl::verify_peer | ssl::verify_fail_if_no_peer_cert);
   socket.set_verify_callback(
       [](bool /*preverified*/,

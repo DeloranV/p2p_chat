@@ -1,5 +1,5 @@
-#ifndef CHAT_APP_PROGRAM_MODE_H
-#define CHAT_APP_PROGRAM_MODE_H
+#ifndef P2P_CHAT_APP_GUI_MAIN_MENU_H_
+#define P2P_CHAT_APP_GUI_MAIN_MENU_H_
 
 #include "ui/ui_main_menu.h"
 
@@ -19,24 +19,24 @@ class MainMenu : public QWidget {
   /**
    * @return IP address of the selected host in the form of a string.
    */
-  [[nodiscard]] std::string get_selected_host() const;
+  [[nodiscard]] std::string GetSelectedHost() const;
 
   /// @brief Adds a new host to the list.
   /**
    * @param hostname A nickname given to the added host.
    * @param ip_addr The IP address of the added host.
    */
-  void add_new_host(std::string hostname, std::string ip_addr);
+  void AddNewHost(std::string hostname, std::string ip_addr);
 
   Ui::main_menu_widget main_menu_widget_;
 
  signals:
-  void add_host_bttn_clicked();
-  void connect_bttn_clicked();
+  void AddHostBttnClicked();
+  void ConnectBttnClicked();
 
  private:
-  void setup_connections();
+  void SetupConnections();
 };
 }  // namespace chat_exec::gui
 
-#endif  // CHAT_APP_PROGRAM_MODE_H
+#endif  // P2P_CHAT_APP_GUI_MAIN_MENU_H_

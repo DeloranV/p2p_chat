@@ -1,5 +1,5 @@
-#ifndef CHAT_APP_SESSION_H
-#define CHAT_APP_SESSION_H
+#ifndef P2P_CHAT_CORE_LIB_CHAT_CORE_SESSION_H_
+#define P2P_CHAT_CORE_LIB_CHAT_CORE_SESSION_H_
 
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
@@ -12,16 +12,16 @@ namespace chat_lib::session {
 
 using boost::asio::ip::tcp;
 namespace ssl = boost::asio::ssl;
-typedef ssl::stream<tcp::socket> ssl_socket;
-using msg_handler_t =
+typedef ssl::stream<tcp::socket> SSLSocket;
+using MsgHandler =
     std::function<void(std::string, util::ChatError, messages::ChatMessage)>;
 
 /// @brief Manages an active communication session with a peer.
-class chat_session : public std::enable_shared_from_this<chat_session> {
+class ChatSession : public std::enable_shared_from_this<ChatSession> {
  public:
-  chat_session(boost::asio::io_context& io_context, ssl_socket socket);
-  chat_session(chat_session&) = delete;
-  chat_session(chat_session&&) noexcept;
+  ChatSession(boost::asio::io_context& io_context, SSLSocket socket);
+  ChatSession(ChatSession&) = delete;
+  ChatSession(ChatSession&&) noexcept;
 
   /// @brief Queues a message to be sent to the remote peer.
   /**
@@ -29,7 +29,7 @@ class chat_session : public std::enable_shared_from_this<chat_session> {
    *
    * @param msg The plain text content of the message to send.
    */
-  void send_msg(const std::string& msg);
+  void SendMsg(const std::string& msg);
 
   /// @brief Starts the asynchronous read loop.
   /**
@@ -39,23 +39,23 @@ class chat_session : public std::enable_shared_from_this<chat_session> {
    * @code void(std::string ip, ChatError err, std::string)@endcode
    */
 
-  void listen_msg(const msg_handler_t& handler);
+  void ListenMsg(const MsgHandler& handler);
 
-  void stop();
+  void Stop();
 
   /// @brief Returns the IP address of the local machine.
-  std::string get_local_address();
+  std::string GetLocalAddress();
 
   /// @brief Returns the IP address of the connected remote peer.
-  std::string get_remote_address();
+  std::string GetRemoteAddress();
 
  private:
   std::array<char, 128> rx_buf_;
-  ssl_socket socket_;
+  SSLSocket socket_;
   std::string remote_endpoint_address_;
-  std::string last_received_msg;
+  std::string last_received_msg_;
   boost::asio::io_context& io_context_;
 };
 }  // namespace chat_lib::session
 
-#endif  // CHAT_APP_SESSION_H
+#endif  // P2P_CHAT_CORE_LIB_CHAT_CORE_SESSION_H_

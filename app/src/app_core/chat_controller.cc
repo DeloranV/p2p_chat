@@ -8,22 +8,22 @@ ChatController::ChatController(boost::asio::io_context &io_context)
       session_manager_(std::make_shared<SessionManager>(io_context)),
       server_(std::make_shared<chat_lib::networking::Server>(io_context)),
       client_(std::make_shared<chat_lib::networking::Client>(io_context)) {
-  connect(gui_manager_.get(), &gui::GuiManager::chat_window_opened, this,
-          &ChatController::open_chat);
-  connect(gui_manager_.get(), &gui::GuiManager::message_sent,
-          session_manager_.get(), &SessionManager::message_sent);
-  connect(session_manager_.get(), &SessionManager::message_received,
-          gui_manager_.get(), &gui::GuiManager::display_received_msg);
-  connect(session_manager_.get(), &SessionManager::host_disconnect,
-          gui_manager_.get(), &gui::GuiManager::open_host_disconnected);
+  connect(gui_manager_.get(), &gui::GuiManager::ChatWindowOpened, this,
+          &ChatController::OpenChat);
+  connect(gui_manager_.get(), &gui::GuiManager::MessageSent,
+          session_manager_.get(), &SessionManager::MessageSent);
+  connect(session_manager_.get(), &SessionManager::MessageReceived,
+          gui_manager_.get(), &gui::GuiManager::DisplayReceivedMsg);
+  connect(session_manager_.get(), &SessionManager::HostDisconnect,
+          gui_manager_.get(), &gui::GuiManager::OpenHostDisconnected);
 }
 
-void ChatController::run() {
-  setup_server();
-  start_io_context();
+void ChatController::Run() {
+  SetupServer();
+  StartIOContext();
 }
 
-void ChatController::start_io_context() {
+void ChatController::StartIOContext() {
   if (io_thread_.joinable()) return;
   io_thread_ = std::thread([this] {
     auto work_guard = boost::asio::make_work_guard(io_context_);
@@ -31,27 +31,27 @@ void ChatController::start_io_context() {
   });
 }
 
-void ChatController::open_chat(const std::string &target_ip) {
-  if (session_manager_->is_session_active(target_ip)) {
-    gui_manager_->open_chat_window();
+void ChatController::OpenChat(const std::string &target_ip) {
+  if (session_manager_->IsSessionActive(target_ip)) {
+    gui_manager_->OpenChatWindow();
     return;
   }
   try {
-    auto host_ip = gui_manager_->get_host_ip();
+    auto host_ip = gui_manager_->GetHostIP();
     // (TODO #4) Remake client to be async
-    auto s_socket = client_->try_connect(host_ip);
-    session_manager_->start_session(std::move(s_socket));
-    start_client();
+    auto s_socket = client_->TryConnect(host_ip);
+    session_manager_->StartSession(std::move(s_socket));
+    StartClient();
   } catch (...) {
-    gui_manager_->open_unavailable();
+    gui_manager_->OpenUnavailable();
   }
 }
 
-void ChatController::start_client() { gui_manager_->open_chat_window(); }
+void ChatController::StartClient() { gui_manager_->OpenChatWindow(); }
 
-void ChatController::setup_server() {
-  server_->await_connection([this](chat_lib::session::ssl_socket s) {
-    session_manager_->start_session(std::move(s));
+void ChatController::SetupServer() {
+  server_->AwaitConnection([this](chat_lib::session::SSLSocket s) {
+    session_manager_->StartSession(std::move(s));
   });
 }
 
